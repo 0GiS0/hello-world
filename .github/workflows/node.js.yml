@@ -14,16 +14,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x]
+    #strategy:
+     # matrix:
+      #  node-version: [10.x, 12.x, 14.x]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 12.x
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
@@ -31,7 +31,18 @@ jobs:
       uses: actions/upload-artifact@v2.2.1
       with:
         # Artifact name
-        name: my-artifact ${{ matrix.node-version }}
+        name: my-artifact
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ github.workspace }}
-      
+        
+  deployment:
+    runs-on: ubuntu
+    needs: [build]
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v2.0.7
+      with:
+        # Artifact name
+        name: my-artifact
+    
+       
